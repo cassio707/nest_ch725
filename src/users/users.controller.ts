@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { UsersService } from "./users.service.js";
-import type { User } from "./users.models.js";
+import type { User } from "../generated/prisma/client.js";
 import { CreateUserDto } from "./dto/create-user.dto.js";
 import { AuthGuard } from "../guards/auth.guard.js";
 import { User as UserDecorator } from "../decorators/user.decorator.js";
@@ -32,7 +32,7 @@ export class UsersController {
   }
 
   @Get()
-  getAllUsers(@Query("role") role?: string): User[] {
+  getAllUsers(@Query("role") role?: string) {
     return role === undefined
       ? this.usersService.findAll()
       : this.usersService.findByRole(role);
@@ -44,12 +44,12 @@ export class UsersController {
   }
 
   @Get(":id")
-  getUserById(@Param("id", ParseIntPipe) id: number): User {
+  getUserById(@Param("id", ParseIntPipe) id: number) {
     return this.usersService.findOne(id);
   }
 
   @Post()
-  createUser(@Body() dto: CreateUserDto): User {
+  createUser(@Body() dto: CreateUserDto) {
     return this.usersService.create(dto);
   }
 

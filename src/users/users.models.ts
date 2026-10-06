@@ -1,5 +1,1 @@
-export interface User {
-  id: number;
-  username: string;
-  role: "admin" | "user";
-}
+export type { User } from "../generated/prisma/client.js";

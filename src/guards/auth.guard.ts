@@ -11,7 +11,7 @@ import { UsersService } from "../users/users.service.js";
 export class AuthGuard implements CanActivate {
   constructor(private readonly usersService: UsersService) {}
 
-  canActivate(context: ExecutionContext): boolean {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const userIdHeader = request.headers["x-user-id"];
 
@@ -27,7 +27,7 @@ export class AuthGuard implements CanActivate {
     }
 
     try {
-      request.user = this.usersService.findOne(userId);
+      request.user = await this.usersService.findOne(userId);
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw new UnauthorizedException("کاربری با این شناسه پیدا نشد");

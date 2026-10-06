@@ -3,6 +3,9 @@
 /build
 *.tsbuildinfo
 
+# prisma generated client
+/src/generated/prisma
+
 # dependencies
 /node_modules
 
