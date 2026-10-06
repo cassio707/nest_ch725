@@ -15,7 +15,11 @@ export class UsersService {
   }
 
   findOne(id: number) {
-    return this.users.find((user) => user.id === id);
+    const user = this.users.find((user) => user.id === id);
+    if (!user) {
+      throw new NotFoundException(`کاربری با شناسه ${id} یافت نشد`);
+    }
+    return user;
   }
 
   create(dto: CreateUserDto) {
@@ -31,7 +35,7 @@ export class UsersService {
   delete(id: number) {
     const index = this.users.findIndex((user) => user.id === id);
     if (index === -1) {
-      throw new NotFoundException(`User with id ${id} not found`);
+      throw new NotFoundException(`کاربری با شناسه ${id} یافت نشد`);
     }
     const deletedUser = this.users[index];
     this.users.splice(index, 1);
