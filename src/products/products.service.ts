@@ -55,6 +55,7 @@ export class ProductsService {
     }
 
     this.products.splice(index, 1);
-    
+
+    return { message: `محصول با شناسه ${id} با موفقیت حذف شد` };
   }
 }
