@@ -1,0 +1,41 @@
+# compiled output
+/dist
+/build
+*.tsbuildinfo
+
+# dependencies
+/node_modules
+
+# logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# tests / coverage
+/coverage
+/.nyc_output
+
+# env / secrets
+.env
+.env.*
+!.env.example
+
+# IDE
+.idea
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+*.swp
+*.swo
+
+# optional tooling
+.turbo
+.cache
