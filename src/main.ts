@@ -6,9 +6,13 @@ import { TransformInterceptor } from "./interceptors/transform.interceptor.js";
 import { HttpExceptionFilter } from "./filters/http-exception.filter.js";
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
-    instrument: ObserveInstrument,
-  });
+  const observeEnabled = Boolean(
+    process.env.NEST_OBSERVE_APP_KEY && process.env.NEST_OBSERVE_APP_SECRET,
+  );
+  const app = await NestFactory.create(
+    AppModule,
+    observeEnabled ? { instrument: ObserveInstrument } : undefined,
+  );
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
