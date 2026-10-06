@@ -10,19 +10,19 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { UsersService } from "./users.service.js";
-import type { User } from "../generated/prisma/client.js";
 import { CreateUserDto } from "./dto/create-user.dto.js";
-import { AuthGuard } from "../guards/auth.guard.js";
+import { JwtAuthGuard } from "../guards/jwt-auth.guard.js";
 import { User as UserDecorator } from "../decorators/user.decorator.js";
+import type { PublicUser } from "./users.models.js";
 
 @Controller("users")
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get("profile")
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtAuthGuard)
   getProfile(
-    @UserDecorator() currentUser: User,
+    @UserDecorator() currentUser: PublicUser,
     @UserDecorator("username") username: string,
   ) {
     return {
@@ -54,7 +54,7 @@ export class UsersController {
   }
 
   @Delete(":id")
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtAuthGuard)
   deleteUser(@Param("id", ParseIntPipe) id: number) {
     return this.usersService.delete(id);
   }

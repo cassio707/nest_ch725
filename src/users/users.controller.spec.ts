@@ -2,7 +2,7 @@ import { NotFoundException } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import { UsersController } from "./users.controller.js";
 import { UsersService } from "./users.service.js";
-import { AuthGuard } from "../guards/auth.guard.js";
+import { JwtAuthGuard } from "../guards/jwt-auth.guard.js";
 
 const usersServiceMock = {
   findAll: vi.fn(),
@@ -19,11 +19,11 @@ describe("UsersController", () => {
     vi.clearAllMocks();
     const module = await Test.createTestingModule({
       controllers: [UsersController],
-      providers: [
-        { provide: UsersService, useValue: usersServiceMock },
-        { provide: AuthGuard, useValue: { canActivate: () => true } },
-      ],
-    }).compile();
+      providers: [{ provide: UsersService, useValue: usersServiceMock }],
+    })
+      .overrideGuard(JwtAuthGuard)
+      .useValue({ canActivate: () => true })
+      .compile();
 
     controller = module.get(UsersController);
   });
@@ -52,7 +52,12 @@ describe("UsersController", () => {
   });
 
   it("creates a user", async () => {
-    const dto = { username: "new_user", role: "user" as const };
+    const dto = {
+      email: "new@example.com",
+      username: "new_user",
+      password: "secret1",
+      role: "user" as const,
+    };
     const created = { id: 4, ...dto };
     usersServiceMock.create.mockResolvedValue(created);
 

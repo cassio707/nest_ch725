@@ -1,1 +1,7 @@
-export type { User } from "../generated/prisma/client.js";
+export type PublicUser = {
+  id: number;
+  email: string;
+  username: string;
+  role: string;
+  createdAt: Date;
+};

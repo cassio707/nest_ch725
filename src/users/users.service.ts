@@ -3,9 +3,18 @@ import {
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
+import * as bcrypt from "bcrypt";
 import { Prisma } from "../generated/prisma/client.js";
 import { PrismaService } from "../prisma/prisma.service.js";
 import { CreateUserDto } from "./dto/create-user.dto.js";
+
+const publicUserSelect = {
+  id: true,
+  email: true,
+  username: true,
+  role: true,
+  createdAt: true,
+} as const;
 
 @Injectable()
 export class UsersService {
@@ -13,6 +22,7 @@ export class UsersService {
 
   findAll() {
     return this.prisma.user.findMany({
+      select: publicUserSelect,
       orderBy: { id: "asc" },
     });
   }
@@ -20,6 +30,7 @@ export class UsersService {
   findByRole(role: string) {
     return this.prisma.user.findMany({
       where: { role },
+      select: publicUserSelect,
       orderBy: { id: "asc" },
     });
   }
@@ -27,6 +38,7 @@ export class UsersService {
   async findOne(id: number) {
     const user = await this.prisma.user.findUnique({
       where: { id },
+      select: publicUserSelect,
     });
 
     if (!user) {
@@ -40,16 +52,19 @@ export class UsersService {
     try {
       return await this.prisma.user.create({
         data: {
+          email: dto.email,
           username: dto.username,
+          password: await bcrypt.hash(dto.password, 10),
           role: dto.role,
         },
+        select: publicUserSelect,
       });
     } catch (error) {
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&
         error.code === "P2002"
       ) {
-        throw new ConflictException("این نام کاربری قبلاً ثبت شده است");
+        throw new ConflictException("این ایمیل یا نام کاربری قبلاً ثبت شده است");
       }
       throw error;
     }
@@ -59,6 +74,7 @@ export class UsersService {
     try {
       const user = await this.prisma.user.delete({
         where: { id },
+        select: publicUserSelect,
       });
 
       return {
